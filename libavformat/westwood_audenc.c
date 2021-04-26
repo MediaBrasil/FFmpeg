@@ -73,7 +73,6 @@ static int wsaud_write_header(AVFormatContext *ctx)
     AVStream     *st = ctx->streams[0];
     AVIOContext  *pb = ctx->pb;
     AUDMuxContext *a = ctx->priv_data;
-    int ret;
     unsigned char flags = 0;
 
     a->uncomp_size = 0;
@@ -103,7 +102,8 @@ static int wsaud_write_packet(AVFormatContext *ctx, AVPacket *pkt)
     AVIOContext  *pb = ctx->pb;
     AUDMuxContext *a = ctx->priv_data;
 
-    av_assert1(pkt->size < UINT16_MAX && (pkt->size * 4) < UINT16_MAX);
+    if (pkt->size > UINT16_MAX / 4)
+        return AVERROR_INVALIDDATA;
     /* Assumes ADPCM since this muxer doesn't support SND1 or PCM format. */
     avio_wl16(pb, pkt->size);
     avio_wl16(pb, pkt->size * 4);
