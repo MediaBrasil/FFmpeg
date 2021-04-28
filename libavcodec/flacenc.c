@@ -1407,14 +1407,11 @@ static int flac_encode_frame(AVCodecContext *avctx, AVPacket *avpkt,
 
 static av_cold int flac_encode_close(AVCodecContext *avctx)
 {
-    if (avctx->priv_data) {
-        FlacEncodeContext *s = avctx->priv_data;
-        av_freep(&s->md5ctx);
-        av_freep(&s->md5_buffer);
-        ff_lpc_end(&s->lpc_ctx);
-    }
-    av_freep(&avctx->extradata);
-    avctx->extradata_size = 0;
+    FlacEncodeContext *s = avctx->priv_data;
+
+    av_freep(&s->md5ctx);
+    av_freep(&s->md5_buffer);
+    ff_lpc_end(&s->lpc_ctx);
     return 0;
 }
 
